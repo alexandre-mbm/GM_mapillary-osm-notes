@@ -40,10 +40,9 @@ function OpenInNewTab(url) {
     win.focus();
 }
 
-function show() {
+function setData() {
 
     //var id_photo = (window.location+'').match(/\/([^\/]*)$/)[1];
-
     var id_photo = (window.location+'').split('/')[5];
 
     var mapillaryAPI;
@@ -54,7 +53,7 @@ function show() {
         method: 'GET',
         url: mapillaryAPI,
         onload: function(response) {
-             
+
             var myJson = response.responseText;        
             var jsonObj = $.parseJSON (myJson);
             
@@ -85,17 +84,50 @@ function show() {
             
             //OpenInNewTab(osm_note_URL);
             
-            $('<span/>').text(' | Plugin: ').appendTo($('div.date.ng-binding')[0]);
-            
-            $('<a/>',
-                {
-                     href: osm_note_URL,
-                     target: '_blank'  
-                }
-            ).text('Criar Nota no OpenStreetMap!').appendTo($('div.date.ng-binding')[0]);
-            
+            //alert($('#GM_create_osm_note'));
+            //alert($('#GM_create_osm_note')[0]);
+
+            if(!$('#GM_create_osm_note')[0])
+            {
+                createLink('');
+            }
+            else
+            {
+                $('#GM_create_osm_note_HIDE').attr({
+                    href: osm_note_URL
+                });
+
+                $('#GM_create_osm_note_HIDE')[0].click();
+            }
         }
     });
+}
+
+function createLink(osm_note_URL) {
+
+    $('<span/>').text(' | Plugin: ').appendTo($('div.date.ng-binding')[0]);
+
+    $('<a/>',
+        {
+            href: osm_note_URL,
+            target: '_blank',
+            id: 'GM_create_osm_note'
+        }
+    )
+    .text('Criar Nota no OpenStreetMap!')
+    .on('click', function(e) { e.preventDefault(); setData(); } )
+    .appendTo($('div.date.ng-binding')[0]);
+
+    $('<a/>',
+        {
+            href: osm_note_URL,
+            target: '_blank',
+            id: 'GM_create_osm_note_HIDE',
+            style: 'visibility:hidden;'
+        }
+    )
+    .text('')
+    .appendTo($('div.date.ng-binding')[0]);
 
 }
 
@@ -146,7 +178,7 @@ if((window.location+'').match(/.*www\.openstreetmap\.org\/note\/new#map=18\/[^\/
 else
 {
     //GM_registerMenuCommand('Mapillary 2 OSM Note', show, 'h');
-    show();
+    setData();
 }
 
 
